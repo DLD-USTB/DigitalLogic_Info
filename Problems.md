@@ -64,3 +64,5 @@
 
     A：没有，只要能够在课程结束前验收，都没有区别，靠后验收没有什么影响。当然，我们建议尽早验收。
 
+# 回到主页
+[主页](https://zhangziqing.github.io/DigitalLogic_Info/)
