@@ -2,6 +2,6 @@
 
 Visit our website by the link below
 
-```
-https://zhangziqing.github.io/DigitalLogic_Info
-```W
+
+[Digital Logic](https://zhangziqing.github.io/DigitalLogic_Info/index.html)
+
