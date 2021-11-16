@@ -23,6 +23,9 @@
 
 [新版Ego1开发手册](./document/Ego1_UserManual_v2.2.pdf)
 
+[新版Ego1原理图](./document/
+Ego1SchematicDiagram.pdf)
+
 
 ### 参考书目
 
