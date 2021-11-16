@@ -1,5 +1,2 @@
 title: 数字逻辑
 theme: jekyll-theme-cayman
-plugins:
-  - jekyll-remote-theme
-remote_theme: zivong/jekyll-theme-hydure
