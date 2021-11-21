@@ -12,13 +12,19 @@
 [问题汇总页面](https://zhangziqing.github.io/DigitalLogic_Info/Problems.html)
 
 ## Verilog相关的说明
-暂无，尽请期待
+
+暂无，敬请期待
+
 ## 相关资料下载
 
 ### 板卡资料手册
+
 我们的EGO1板子是分两个批次购买的，所以可能会出现开发手册和实际硬件不符的情况，下面的是新版本的开发手册
 
 [新版Ego1开发手册](./document/Ego1_UserManual_v2.2.pdf)
+
+[新版Ego1原理图](./document/
+Ego1SchematicDiagram.pdf)
 
 
 ### 参考书目
@@ -28,6 +34,7 @@
 [数字设计原理与实践](./document/数字设计原理与实践.pdf)
 
 Verilog数字系统设计教程 第3版 夏宇闻2013.pdf
+
 > 此书对Verilog的语法介绍的极其详细，（详细到很多功能其实基本没机会用到），语法上有不清楚的地方建议参考
 >
 > PS:文件太大了，没有放到网页上来
