@@ -50,7 +50,7 @@
     * 检查是否已经分配所有管脚：
         * 在`implementation`完成后点击`open implementation design`界面，随后点击页面最上方的`Layout -> IO Planning`打开管脚分配界面，在其中分配所有管脚，程序中用到的管脚全部要分配，一个都不能少。
         * 如果需要添加管脚约束,在第一次`Synthesis`之后，需要在图形化界面添加管脚约束之后再次`Synthesis`，或者你可以学习如何直接在文件中描述约束
-    
+
 4. 找不到I/O Ports,不知道哪里设置管脚约束
 
     综合之后，默认打开的时候下图的layout，点开左上角红框的Default Layout选框，选择I/O Planning，进入管脚分配模式
@@ -64,8 +64,12 @@
     **tips：**如果发现管脚和硬件手册上的管脚对应不上，不用紧张，因为学校购置的开发板有两批，第二批的开发板引脚和第一版不完全一致，[第二版的硬件手册](./document/Ego1_UserManual_v2.2.pdf)可以点击链接下载。
 
     <img src="pic.asset/image-20211116204025765.png" alt="image-20211116204025765" style="zoom:80%;" />
-    
-5. vivado玄学崩溃/无法仿真/打不开rtl分析
+
+5. 点击Run Simulation后一直卡在加载条那里
+
+    删除项目目录中的`sim/sim_1`文件夹并重试。
+
+6. vivado玄学崩溃/无法仿真/打不开rtl分析
 
     首先还是请同学们认真查看vivado的报错，review代码，，查看是否添加约束，排除代认为问题。如果实在排查不出问题，可以尝试下述方式。
 
