@@ -84,7 +84,7 @@ return sum
 BitVector x,y
 sum = 0
 x <<= len(y)
-for i from 1 to len(y)-1:
+for i from 0 to len(y)-1:
 	sum += y[i]*x
     sum >>=1
 return sum
