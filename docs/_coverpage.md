@@ -1,14 +1,14 @@
-# USTB 数字逻辑
+# DLD <small>0.0.1</small>
 
+Digital Logic Document
 
-
-> 本站由2020级北京科技大学数字逻辑课程助教创建并维护
+> DLD,not DDL
 
 - 学习数逻知识
 - 解决实验疑难
 - 下载相关资料
 
-
+[资源下载站](#reference)
 [Getting Started](#/)
 
 ## 欢迎来到数字世界！
