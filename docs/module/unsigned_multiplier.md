@@ -83,7 +83,7 @@ return sum
 ```python
 BitVector x,y
 sum = 0
-x <<= 32
+x <<= len(y)
 for i from 1 to len(y)-1:
 	sum += y[i]*x
     sum >>=1
