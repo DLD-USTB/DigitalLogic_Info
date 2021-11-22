@@ -3,5 +3,5 @@
 Visit our website by the link below
 
 
-[Digital Logic](https://zhangziqing.github.io/DigitalLogic_Info/index)
+[Digital Logic](https://zhangziqing.github.io/DigitalLogic_Info/)
 
