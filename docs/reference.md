@@ -1,3 +1,9 @@
+### 教材
+
+教材原文版
+
+[数字逻辑基础与Verilog设计](/document/Fundamentals_of_Digital_Logic_with_Verilog_Design.pdf ':ignore')
+
 ### 参考书目
 
 [Verilog设计（原书第2版）](/document/Verilog设计（原书第2版）.pdf ':ignore')
