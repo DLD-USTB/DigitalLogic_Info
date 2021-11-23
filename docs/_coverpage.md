@@ -11,7 +11,7 @@ Welcome to the digital world!
 
 **本站包含**
 
-- [《从数字逻辑到中科院硬件所》](https://www.bilibili.com/video/BV1GJ411x7h7?from=search&seid=9562721231662733940&spm_id_from=333.337.0.0)
+- [《从数字逻辑到中科院硬件所》](/surprise)
 - [《Vivado玄学修复大法》](/Problems)
 - [《仿真波形会遇见电子助教吗》](/grading)
 

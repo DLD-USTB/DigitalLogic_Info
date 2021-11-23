@@ -24,6 +24,21 @@
       subMaxLevel: 3,
       noCompileLinks: ['/document'],
       coverpage: true,
+      plugins: [
+      function(hook) {
+        var footer = [
+          '<hr/>',
+          '<footer>',
+          '<span><a href="https://github.com/zhangziqing/DigitalLogic_Info">DLD-USTB</a>;2021.</span>',
+          '<span>Proudly published with <a href="https://github.com/docsifyjs/docsify" target="_blank">docsify</a>.</span>',
+          '</footer>'
+        ].join('');
+
+        hook.afterEach(function(html) {
+          return html + footer;
+        });
+      }
+    ]
   }
 
   </script>
