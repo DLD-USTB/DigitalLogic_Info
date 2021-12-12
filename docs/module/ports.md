@@ -67,6 +67,8 @@ counter模块的功能非常简单,它设置了两个计数器`first`和`second`
 
 第二个计数器依赖于第一个计数器,它加一条件,除了本身`second`小于1w以外,还需要`first`等于1w,才会加一,因为`first`加一之后会在下一个时钟周期清零,所以`second`两次加一之间,间隔为`first`从0加到1w需要的时间.
 
+最后就是输出信号`clk_bps`,使用了一个三元表达式-判断`clk_bps`的输出,如果`second`等于1w,则输出1, 否则输出0
+
 ```verilog
 module counter(
   input clk,
