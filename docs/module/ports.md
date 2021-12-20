@@ -1,4 +1,4 @@
-# 顶层模块与端口映射
+# 流水灯
 
 > by NginW
 
@@ -69,6 +69,8 @@ counter模块的功能非常简单,它设置了两个计数器`first`和`second`
 
 最后就是输出信号`clk_bps`,使用了一个三元表达式-判断`clk_bps`的输出,如果`second`等于1w,则输出1, 否则输出0
 
+`counter`模块将两个1w计数器级联,同时采用同步清零法,在计数器达到1w之后,下一个时间周期才会清零.所以单个计数器会经历0~10000一共10001个状态,采用了两个计数器级联的方式,所以两次输出`clk_bps`之间,会间隔10001*10001个时钟周期
+
 ```verilog
 module counter(
   input clk,
@@ -109,6 +111,42 @@ module counter(
   assign clk_bps = counter_second == 14'b10000;
 
 endmodule
+```
+
+### led_ctl
+
+一位是一个流水灯的控制信号,有16个流水灯需要控制,所以输出一共有16位信号,每一位通过管脚约束,和一个eld灯绑定.当某一位为1,led点亮,否则熄灭.通过按键开关dir控制流水灯的方向.
+
+因为16位寄存器类型数据`led`每一位都和led绑定,所以实质上流水灯控制就是对`led`数据的控制.当点亮的led不在边界时,将数据左移或者右移一位,当遇到边界时,依据运动的方向进行置位(1或者0x8000)
+
+```verilog
+module flash_led_ctl(
+ 	 	input clk,
+ 	 	input rst,
+ 	 	input dir,
+ 	 	input clk_bps,
+ 	 	output reg[15:0]led
+ 	 	);
+ 	 	always @( posedge clk or posedge rst )
+ 	 		if( rst )
+ 	 			led <= 16'h8000;
+ 	 		else
+ 	 			case( dir )
+ 	 				1'b0:  			 //从左向右
+ 	 					if( clk_bps )
+ 	 				 		if( led != 16'd1 )
+ 	 							led <= led >> 1'b1;
+ 	 						else
+ 	 							led <= 16'h8000;
+ 	 				1'b1:  			 //从右向左
+ 	 			 		if( clk_bps )
+ 	 						if( led != 16'h8000 )
+ 	 							led <= led << 1'b1;
+ 	 						else
+ 	 							led <= 16'd1;
+ 	 			endcase
+endmodule
+
 ```
 
 
