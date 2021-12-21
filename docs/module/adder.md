@@ -17,13 +17,13 @@ EGO1上提供了两组数码管，每组数码管包括4个数码管，每个数
 
 两种写法理论都可行，需要注意的是`always`语句中只有`reg`类型能被赋值。所以被声明对象必须要被声明为`reg`类型。需要注意的一点是，如果在`always@(*)`这种语块中，未能将所有的情况全部覆盖，比如经典的写`if`不写`else`，这就会导致锁存(Latch)，这样就导致电路的变化与我们预期的不符，所以在采用`always`写组合逻辑的话，一定要注意`always`语块本身的特殊性。
 
-!> 总而言之，注意reg,注意latch
+!> 注意reg   注意latch
 
 这种情况的产生原因是因为`Verilog`本身未划清用于组合逻辑的`always`和用于时序逻辑的`always`。在System Verilog当中，为了区别这一点，它引入了`always_comb`和`always_ff`用于区分时序逻辑和组合逻辑。
 
 那么如果在Verilog中，除了注意写`else`和`default`，还有没有办法能够保证不出现Latch呢？答案当然是有的。解决方法就是，把所有的组合逻辑`always`语块，换成`assign`语句:
 
-```Verilog
+```verilog
 assign seg = (num == 4'd0) ? 8'b0011_1111:
              (num == 4'd1) ? 8'b0101_1011:
              (num == 4'd2) ? 8'b0100_1111:
@@ -120,14 +120,175 @@ ppt给出了这样一个公式
 
 $$T_{csadder} = t_{setup} + \frac NM t_{carry}+ Mt_{mux}+t_{sum}$$
 
-考虑到很多同学财大气粗事实上是在一个选择进位加法器里放了两个adder，所以实际的延迟公式和上面的有出入，比上面的计算出的时延应该会稍小一些，感兴趣可以自己推导。
 
-很多同学事实上忽略了很重要的一点，选择器也是有时延的。一个选择器是两级门电路，一级与门一级或门。所以如果考虑选择器的时延，它的时延与串行进位加法器进位产生的时延是一致的。如果每个加法器进行一次选择，最高一级加法器确定结果需要等待前面31位加法器的选择，也就是62个门电路的延迟。有没有感觉到很熟悉? 跟串行的加法器一模一样。如果分组过细，比如一个一组，可能带来的性能有限。
+为了真正验证选择加法器的时延，我们重新为选择进位加法器加上两个单位的延迟，为了保证选择进位加法器正常工作，与上图不同的地方在于**第一个组加法器是不包含选择的**。以下的公式推导也基于这一点。
 
-考虑延迟以后，每组的性能如下,上面一行是每组选择的选择加法器，下面一行是逐位加法器，显然，没怎么快。
+考虑到很多同学财大气粗事实上是在一个选择进位加法器里放了两个adder，所以实际的延迟公式和上面的有出入，比上面的计算出的时延应该会稍小一些。
 
-![](../pics.asset/csadder_nogroup.jpg)
+考虑最后一组加法器，在进位信号到来是已经将结果计算完成，等待前面的各组选择器将时延传过来，每一个选择器的时延是$t_{mux}$，那么所有的时延就是$(\frac NM - 1)t_{mux}$，第一个加法器传出的进位信号有效，需要等到其组内的信号传递结束，也就是需要等待一个$MT_{carry}$的时间。总结时延公式如下。
 
-那么选择进位加法器为什么能够带来效率的提升呢？
+$$T_{csadder} = Mt_{carry} + (\frac NM-1) t_{Mux}$$
+
+很多同学事实上忽略了很重要的一点，选择器也是有时延的。一个选择器是两级门电路，一级与门一级或门。所以如果考虑选择器的时延，它的时延与串行进位加法器进位产生的时延是一致的。如果每个加法器进行一次选择，最高一级加法器确定结果需要等待前面31位加法器的选择，也就是62个门电路的延迟。有没有感觉到很熟悉? 跟串行的加法器一模一样。如果分组过细，比如一个一组，可能带来的性能提升有限。
+
+考虑延迟以后，每组的性能如下,上面一行是每组选择的选择加法器，测得延迟为64ns，下面一行是逐位加法器，延迟66ns，显然，没怎么快。
+
+最下面一行是分成8组的选择进位加法器，测得时延为$22ns = 7\times2 + 4\times 2$与预期一致
+
+![](../pics.asset/csadder_nogroup.gif)
+
+选择进位加法器为什么能够带来效率的提升呢？
 
 选择进位加法器经过分组后，后面的每一个组并不需要依赖于前一个组的进位信号传入，而是将两种可能的结果计算一遍，而等前面一级的进位信号来时，只要选择正确的输出即可。
+
+
+## 完整测试代码
+
+```verilog
+`timescale 1ns / 1ps
+
+module add32_tb();
+    reg [31:0]a;
+    reg [31:0]b;
+    reg cin;
+    reg clk;
+    wire [31:0]s0,s1,s2;
+    wire cout0,cout1,cout2;
+    initial begin
+        a = 4'bxxxx;
+        b = 4'bxxxx;
+        cin = 1'bx;
+        clk = 0;
+    end
+    always #100 clk = ~clk;
+    always@(posedge clk)begin
+        a={$random}%2**30;
+        b={$random}%2**30;
+        cin={$random}%2;
+        #150;
+        cin=1'bx;
+    end
+
+    csadd_nogroup A(a,b,cin,s0,cout0);//Carry-Select Adder group-size = 1
+    rcadd32 B(a,b,cin,s1,cout1);//Ripple-Carry Adder 
+    csadd32 C(a,b,cin,s2,cout2);//Carray-Select Adder group-size = 4
+
+endmodule
+module csadd32(
+    input [31:0]a,
+    input [31:0]b,
+    input cin,
+    output [31:0]sum,
+    output cout
+);//
+    wire [8:0] c;
+    wire [8:0] c0;
+    wire [8:0] c1;
+    wire [31:0] sum1;
+    wire [31:0] sum0;
+    genvar i;
+    assign c[0] = cin;
+    assign cout = c[8];
+    rcadd4 a0(a[3:0],b[3:0],c[0],sum[3:0],c[1]); 
+    generate
+        for (i=1;i < 8;i=i+1)
+        begin:add4
+            rcadd4 a0(a[4*i+:4],b[4*i+:4],0,sum0[4*i+:4],c0[i+1]); 
+            rcadd4 a1(a[4*i+:4],b[4*i+:4],1,sum1[4*i+:4],c1[i+1]);
+            assign #2 c[i+1] = (c[i] == 0 || c[i] == 1) ? 
+                                (c[i] ? 
+                                    ((c1[i+1] == 1'b1 || c1[i+1] == 1'b0) ? c1[i+1]:1'bx):
+                                    ((c0[i+1] == 1'b1 || c0[i+1] == 1'b0) ? c0[i+1]:1'bx)
+                                ):
+                                1'bx;
+            assign #2 sum[4*i+:4] = c[i] ? sum1[4*i+:4] : sum0[4*i+:4];
+        end
+    endgenerate
+endmodule
+module rcadd4(
+    input [3:0]a,
+    input [3:0]b, 
+    input cin,
+    output [3:0]sum,
+    output cout
+);//
+    wire [4:0] c;
+    genvar i;
+    assign c[0] = cin;
+    assign cout = c[4];
+    generate
+        for (i=0;i < 4;i=i+1)
+        begin:add
+            add1 a(a[i],b[i],c[i],sum[i],c[i+1]); 
+        end
+    endgenerate
+endmodule
+module csadd_nogroup(
+    input [31:0]a,
+    input [31:0]b, 
+    input cin,
+    output [31:0]sum,
+    output cout
+);
+    genvar i;
+    wire [32:0]c0;
+    wire [32:0]c1;
+    wire [32:0]c;
+    wire [31:0]sum0;
+    wire [31:0]sum1;
+    assign c0[0] = 0;
+    assign c1[0] = 1;
+    assign c[0] = cin;
+    assign cout = c[32];
+    add1 a0(a[0],b[0],c[0],sum[0],c[1]);
+    generate 
+        for (i = 1;i<32;i = i + 1)
+        begin:add
+            add1 a0(a[i],b[i],0,sum0[i],c0[i+1]);
+            add1 a1(a[i],b[i],1,sum1[i],c1[i+1]);
+            assign #2 c[i+1] = (c[i] == 0 || c[i] == 1) ? 
+                                (c[i] ? 
+                                    ((c1[i+1] == 1'b1 || c1[i+1] == 1'b0) ? c1[i+1]:1'bx):
+                                    ((c0[i+1] == 1'b1 || c0[i+1] == 1'b0) ? c0[i+1]:1'bx)
+                                ):
+                                1'bx; 
+            assign #2 sum[i] = c[i] ? sum1[i] :sum0[i];
+        end
+    endgenerate
+endmodule
+module rcadd32(
+    input [31:0]a,
+    input [31:0]b,
+    input cin,
+    output [31:0]sum,
+    output cout
+);
+    wire [32:0] c;
+    genvar i;
+    assign c[0] = cin;
+    assign cout = c[32];
+    generate
+        for (i=0;i < 32;i=i+1)
+        begin:add
+            /*
+            * the "add" will make all instances' name likes add[i].a
+            */
+            add1 a(a[i],b[i],c[i],sum[i],c[i+1]); 
+        end
+    endgenerate
+    
+endmodule
+
+//one-bit full adder
+module add1(
+	input a,
+	input b,
+	input cin,
+	output sum,
+	output cout);
+	assign #4 sum = a ^ b ^ cin;
+	assign #2 cout =  (cin==1)|(cin==0)? (a & cin) | (b & cin)| (a & b):1'bx;
+	//assign #3 cout = (a & b) | (a & cin) | (b & cin);
+endmodule
+
+```
