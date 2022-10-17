@@ -33,21 +33,21 @@ endmodule
 
 这或许会是你在数字逻辑课程里见过的最简单的代码，他只是简单将两个管脚连接起来。但是sw和led着两个信号又是怎么来的呢？connect这个模块不被任何其他模块所实例化，我们称之为顶层模块。在FPGA开发中，顶层模块的接口一般连接到FPGA芯片的管脚上，而这些管脚又连接着不同的外设，所以sw和led事实上对应着FPGA芯片的某个管脚。我们把这块FPGA芯片从这块价值1000元的开发板"抠"下来。
 
-![image-20221017192206154](../pics.asset/image-20221017192206154.png)
+![image-20221017192206154](pics.asset/image-20221017192206154.png':ignore')
 
 可以看到，FPGA看起来就是一个平平无奇的小方片，上面有着很多很多的管脚，每个管脚本来都连接着开发板上的一个触点，通过触点连接到各种各样的外设，比如说拨码开关，LED灯。板上的按键。FPGA的管脚如此之多，几乎每个管脚都有其用武之地，那么哪个管脚才对应着LED灯和拨码开关呢？关于这点，我们可以打开ego1开发板的[手册](document/Ego1_UserManual_v2.2.pdf ':ignore ')。其中有这样两个表格。
 
-<img src="../pics.asset/image-20221017205216185.png" alt="image-20221017205216185" style="zoom: 50%;" />
+<img src="pics.asset/image-20221017205216185.png':ignore'" alt="image-20221017205216185" style="zoom: 50%;" />
 
-<img src="../pics.asset/image-20221017205234472.png" alt="image-20221017205234472" style="zoom:50%;" />
+<img src="pics.asset/image-20221017205234472.png':ignore'" alt="image-20221017205234472" style="zoom:50%;" />
 
 其中第一列`名称`，这是手册给开关或LED起的名字，第二列`原理图标号`，这是电路原理图给开关或LED起的名字。电路原理图描述了电路元件如何与其他部件相连，比如下图就是拨码开关的原理图:
 
-![_images/16.png](../pics.asset/16.png)
+![_images/16.png](pics.asset/16.png':ignore')
 
 而第三列`FPGA IO PIN`则是FPGA厂商为FPGA上的针脚起的名字，FPGA上的管脚采用类似棋盘的命名方式，比如第K行的3列就对应了FPGA的K3管脚，他连接着一个板上的一个LED灯。
 
-<img src="../pics.asset/image-20221017193945166.png" alt="image-20221017193945166" style="zoom:50%;" />
+<img src="pics.asset/image-20221017193945166.png':ignore'" alt="image-20221017193945166" style="zoom:50%;" />
 
 实验手册中的这些表格描述了FPGA芯片管脚与外设管脚的连接关系，所以本实验的主要内容事实上是根据实验手册建立这样的映射关系。
 
@@ -59,25 +59,25 @@ endmodule
 
 1. 首先，打开Vivado, 在Quick Start部分点击Create Project
 
-   <img src="../pics.asset/image-20221017210740393.png" alt="image-20221017210740393" style="zoom: 33%;" />
+   <img src="pics.asset/image-20221017210740393.png':ignore'" alt="image-20221017210740393" style="zoom: 33%;" />
 
 2. 点击Next进入选择路径的页面，选择项目名称和任意你喜欢的路径，但是路径不要带中文也不要过长。
 
-   <img src="../pics.asset/image-20221017210922570.png" alt="image-20221017210922570" style="zoom: 50%;" />
+   <img src="pics.asset/image-20221017210922570.png':ignore'" alt="image-20221017210922570" style="zoom: 50%;" />
 
 3. 选择项目类型`RTL Project`
 
-   <img src="../pics.asset/image-20221017211021425.png" alt="image-20221017211021425" style="zoom:50%;" />
+   <img src="pics.asset/image-20221017211021425.png':ignore'" alt="image-20221017211021425" style="zoom:50%;" />
 
 4. 添加源文件和约束（可以跳过）
 
-   <img src="../pics.asset/image-20221017211119890.png" alt="image-20221017211119890" style="zoom:50%;" />
+   <img src="pics.asset/image-20221017211119890.png':ignore'" alt="image-20221017211119890" style="zoom:50%;" />
 
-   <img src="../pics.asset/image-20221017211130883.png" alt="image-20221017211130883" style="zoom:50%;" />
+   <img src="pics.asset/image-20221017211130883.png':ignore'" alt="image-20221017211130883" style="zoom:50%;" />
 
 5. 接下来是选择板子的型号，不同的FPGA的资源数量，速度，管脚功能都是不同的，一定一定要选择本课程使用的FPGA芯片`xc7a35tcsg324`。
 
-<img src="../pics.asset/image-20221017211458606.png" alt="image-20221017211458606" style="zoom:50%;" />
+<img src="pics.asset/image-20221017211458606.png':ignore'" alt="image-20221017211458606" style="zoom:50%;" />
 
 6. 点击Finish，完成工程创建。
 
@@ -85,13 +85,13 @@ endmodule
 
 7. 进入vivado，界面如下所示，
 
-   <img src="../pics.asset/image-20221017211704211.png" alt="image-20221017211704211" style="zoom: 33%;" />
+   <img src="pics.asset/image-20221017211704211.png':ignore'" alt="image-20221017211704211" style="zoom: 33%;" />
 
 8. 创建设计文件
 
    1. 点击下面的加号
 
-      <img src="../pics.asset/image-20221017211753033.png" alt="image-20221017211753033" style="zoom: 67%;" />
+      <img src="pics.asset/image-20221017211753033.png':ignore'" alt="image-20221017211753033" style="zoom: 67%;" />
 
    2. 点开后，我们会看到下面的界面，其中包括三个部分，分别是
 
@@ -100,11 +100,11 @@ endmodule
       * 创建或增加设计文件（design sources），设计电路的Verilog文件都是设计文件
       * 创建或增加仿真文件（simulation sources），主要是电路的仿真激励。
 
-      <img src="../pics.asset/image-20221017212610562.png" alt="image-20221017212610562" style="zoom:50%;" />
+      <img src="pics.asset/image-20221017212610562.png':ignore'" alt="image-20221017212610562" style="zoom:50%;" />
 
    3. 你可以选择添加现有文件或目录，或者你也可以创建新文件。这里我们创建一个新文件
 
-      <img src="../pics.asset/image-20221017213150219.png" alt="image-20221017213150219" style="zoom:50%;" />
+      <img src="pics.asset/image-20221017213150219.png':ignore'" alt="image-20221017213150219" style="zoom:50%;" />
 
       ![image-20221017213320771](../pics.asset/image-20221017213320771.png)
 
@@ -112,41 +112,41 @@ endmodule
 
 9. 编写文件代码，把上面的代码放到Vivado中。
 
-   <img src="../pics.asset/image-20221017213523356.png" alt="image-20221017213523356" style="zoom:50%;" />
+   <img src="pics.asset/image-20221017213523356.png':ignore'" alt="image-20221017213523356" style="zoom:50%;" />
 
 10. 接下来点击综合，将这个Verilog文件变成网表文件。这里通过在“Flow Navigator”栏中的“Synthesis”下点击“Run Synthesis”。右上角的进度条 “Running synth_design”指示正在对工程进行综合。
 
-    ![image-20221017213714074](../pics.asset/image-20221017213714074.png)
+    ![image-20221017213714074](pics.asset/image-20221017213714074.png':ignore')
 
-    <img src="../pics.asset/image-20221017213736103.png" alt="image-20221017213736103" style="zoom:50%;" />
+    <img src="pics.asset/image-20221017213736103.png':ignore'" alt="image-20221017213736103" style="zoom:50%;" />
 
     
 
 11. 等待综合结束，下面的界面弹出,在弹出的对话框中选择“Open Synthesized Design”，并点击“OK”， 打开综合后的工程。
 
-    ![image-20221017213848863](../pics.asset/image-20221017213848863.png)
+    ![image-20221017213848863](pics.asset/image-20221017213848863.png':ignore')
 
 12. 我们要对sw和led进行绑定，将其绑定到对应的实际管脚上。对管脚的物理属性进行约束，在“I/O Ports”窗口中对输入输出信号添加管脚约束。首先在“I/O Std”一栏通过 下拉按钮选择“LVCOMS33”，将所有信号的电平标准设置 3.3V。在“Package Pin”一栏分配各个信号在 FPGA 芯片上引脚的位置，各信号的具体位置可查看板卡的原理图。
 
-    1. ![image-20221017214846451](../pics.asset/image-20221017214846451.png)
+    1. ![image-20221017214846451](pics.asset/image-20221017214846451.png':ignore')
 
        
 
 13. 点击保存，会弹出一个保存约束文件的选项。这个文件是实际上起到了对IO进行约束的文件。
 
-    <img src="../pics.asset/image-20221017214941010.png" alt="image-20221017214941010" style="zoom: 80%;" />
+    <img src="pics.asset/image-20221017214941010.png':ignore'" alt="image-20221017214941010" style="zoom: 80%;" />
 
     14. 完成后点击Implemention和Generate Bitstream,生成bit流
 
     15. 用USB Type C连接板卡和电脑，打开板卡开关。打开Hardware Manger，点击Open Target，Auto Connect
 
-        <img src="../pics.asset/image-20221017215459350.png" alt="image-20221017215459350" style="zoom:50%;" />
+        <img src="pics.asset/image-20221017215459350.png':ignore'" alt="image-20221017215459350" style="zoom:50%;" />
 
         16. 点击Program device
 
-            <img src="../pics.asset/image-20221017215653435.png" alt="image-20221017215653435" style="zoom:50%;" />
+            <img src="pics.asset/image-20221017215653435.png':ignore'':ignore'" alt="image-20221017215653435" style="zoom:50%;" />
 
-            <img src="../pics.asset/image-20221017215704455.png" alt="image-20221017215704455" style="zoom:50%;" />
+            <img src="pics.asset/image-20221017215704455.png':ignore'" alt="image-20221017215704455" style="zoom:50%;" />
 
 14. 拨动板卡的对应的开关，看看是不是能正常控制LED灯的亮灭呢
 
