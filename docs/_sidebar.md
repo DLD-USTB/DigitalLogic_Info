@@ -1,5 +1,6 @@
 * [首页](/)
 * Verilog模块设计
+	* [Lab0:从0开始的FPGA生活](/module/begin)
 	* [Simulation使用帮助](/module/Simulation) 
 	* [乘法器设计](/module/unsigned_multiplier) 
 	* [ports与顶层模块](/module/ports)
