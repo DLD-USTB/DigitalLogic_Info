@@ -1,3 +1,126 @@
+## 新手上路？
+本文档旨在解答一些新手在学习 verilog 以及进行仿真（simulation）、综合（synthesis）和实现（implementation）过程中遇到的经典问题以及解决方案。
+
+### 在FPGA上开发的流程
+在课程使用的 Xilinx 的 FPGA 上，推荐使用 Vivado 进行开发流程。但由于 Vivado 的编辑功能过于薄弱，在此推荐使用 VSCode 进行 RTL 代码的编辑，使用Vivado来进行仿真、综合以及实现的步骤。
+
+具体更换步骤如下：
+
+1. PROJECT MANAGER - Settings
+2. Tool Settings - Text Editor
+3. Current Editor - Custom Editor - ...
+4. 在 Editor 中按照提示输入编辑器的启动指令
+
+### 仿真建议
+仿真时，建议打开 log all signals 选项，可以便于在仿真中添加信号而无需重新仿真。
+
+打开方式如下：
+
+1. PROJECT MANAGER - Settings
+2. Project Settings - Simulation
+3. 勾选 Simulation - xsim.simulate.log_all_signals
+4. 关闭仿真界面重新运行
+
+### 波形异常
+
+#### 信号为 Z
+如果仿真波形中出现了 Z 信号，那么这意味着该信号处于高阻态（High Impedance），即没有被任何信号驱动的开路状态。注意，这与低电平是不同的。
+
+该问题较好排查，通常是信号名称错误（注意，verilog中不前置声明的情况下使用了一个位宽为1的信号不会产生Error）或者是没有驱动该信号的源。
+
+并不是说出现了高阻态一定意味着错误，在调用IP核的过程中，面对不需要的输出可以将其显式留空。
+
+在查找造成 Z 的原因时，应层层追溯到最早的 input 信号，然后修正。位宽不匹配也会造成信号悬空。
+
+#### 信号为 X
+信号为 X 意为不定态，可能是由于 reg 型变量未被赋值或者是信号冲突（一般是多驱动）导致。**注意，有一些多驱动可能会被 Vivado 自动优化，或者在综合实现的过程中产生错误。这种情况是存在较大风险的。**
+
+在排查 X 信号时，需要层层追溯，直到找到 X 的最早因子进行修复。如果没有该情况，则需要排查多驱动。排查多驱动可以通过综合后查看 Critical Warning 和 Error 来进行。
+
+此外， X | 1 = 1， X & 0 = 0
+
+#### 仿真异常停止
+这种情况一般是出现了组合逻辑环路。当出现此种情况的时候，建议进行综合，通过 Critical Warning 以及 Error 来查找可能的组合逻辑环路。**这并不一定可靠，Vivado 有时无法检测出组合逻辑环路。**
+
+#### 越沿采样
+越演采样比较隐蔽，并且通常被认为是设计错误。通常是非阻塞赋值和阻塞赋值混用导致的。请在所有时序逻辑中使用非阻塞赋值，组合逻辑中使用阻塞赋值来解决。
+
+#### 波形怪异
+如果波形出现了非常诡异的情况，并且排查了 RTL 代码无误后，建议重启 Vivado 或重启电脑。
+
+### 上板仿真不一致
+出现这种情况一般是存在越沿采样，或者是时序违约。请降低时钟频率并修正越沿采样。
+
+如果仍然未解决问题，可以遵循如下步骤：
+
+1. 复核生成、下载的bit文件是否正确。
+如果判断生成的bit文件不正确，则重新生成bit文件。
+如果判断生成的bit文件正确，转步骤2
+2. 复核仿真结果是否正确。
+如果仿真验证结果不正确4，则回到前面仿真验证步骤。
+如果仿真验证结果正确，转步骤3。
+3. 检查实现(Implementation)后的时序报告（Vivado界面左侧“IMPLEMENTATION” 
+→  “Open Implemented Design” 
+→ “Report Timing Summary”）。
+如果发现时序不满足，则在Verilog设计里调优不满足的路径，然后回到前面的仿真验证环节依序执行各项操作；或者降低运行频率，即降低pll模块的输出端频率，然后回到前面上板验证环节依序执行各项操作。
+如果实现时时序是满足的，转步骤4。
+4. 认真排查综合和实现时的Warning。
+Critical warning是强烈建议要修正的，warning是建议尽量修正的，然后回到前面上板验证环节依序执行各项操作。
+如果没有可修正的Warning了，转步骤5。
+5. 人工检查RTL代码，避免多驱动、阻塞赋值乱用、模块端口乱接、时钟复位信号接错、模块调用处的输入输出接反，查看那些从别处模仿来的“酷炫”风格的代码，查找有没有仿真时被force住的值导致仿真和上板不一致……如果怎么看代码都看不出问题，转步骤6。
+6. 参考附录C第1节“使用Chipscope在线调试”进行板上在线调试；如果调试了半天仍然无法解决问题，转步骤7。
+7. 反思。真的，现在除了反思还能干什么？如果反思之后还无法解决该问题，转步骤8。
+8. 冥想。现在除了冥想应该干不了什么了。
+
+### 仿真如何进行
+在verilog中，有一些语句是专门为仿真而设计的，是无法综合的。在编写仿真文件时，应注意养成良好的命名习惯 **（这在任何情况下都适用）**，如所有仿真文件都应以 `_tb` 结尾，模块名也推荐以 `_tb` 结尾。这样可以更加清晰地区分仿真文件与其他文件。在仿真中，通常使用 `initial` 语句进行初始化，并使用类似于 `always #5 clk = ~clk` 的语句生成时钟。`$random()` 语句也是生成随机数的好选择。
+
+下面以对8位加法器进行仿真为例，展示仿真文件的书写过程。adder模块只提供了接口。
+```verilog
+module adder_8_tb();
+    reg          clk      ;
+    reg  [ 7: 0] add_src_1;
+    reg  [ 7: 0] add_src_2;
+    reg          add_cin  ;
+    wire [ 7: 0] add_res  ;
+    wire         add_cout ;
+
+    adder u_adder(
+        .src1   ( add_src_1 ),
+        .src2   ( add_src_2 ),
+        .cin    ( add_cin   ),
+        .res    ( add_res   ),
+        .cout   ( add_cout  )
+    );
+
+    // 进行必要的初始化以及终止条件
+    initial begin
+        clk        = 'b0;
+        #10000 $finish();
+    end
+
+    // 时钟生成
+    always #5 clk = ~clk;
+
+    // 源操作数生成
+    always @(posedge clk) begin
+        add_src_1 <= {8{$random()}};
+        add_src_2 <= {8{$random()}};
+        add_cin   <= {1{$random()}};
+    end
+
+    // 正确性判断
+    always @(posedge clk) begin
+        if((add_src_1 + add_src_2 + add_cin) != {add_cout, add_res}) begin
+            $display("ERROR.");
+            #5 $finish();
+        end
+    end
+endmodule
+```
+
+
+
 ## 问题汇总(又称vivado风水学宝典)
 
 1. Vivado崩溃后C盘被占满，再次运行时无法运行

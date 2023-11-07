@@ -6,6 +6,6 @@
 	* [ports与顶层模块](/module/ports)
 	* [加法器与数码管](/module/adder)
 * [常见问题](Problems)
-    * [第一次作业补充](Lab1QnA)
+    * [第一次作业补充](/module/qna/Lab1QnA)
 * [验收要求](grading)
 * [参考书目及板卡信息](reference)
