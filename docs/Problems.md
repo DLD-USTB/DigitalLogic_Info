@@ -201,3 +201,57 @@ endmodule
     关闭vivado，从文件夹打开工程目录。点击`工程目录/你的工程名字.xpr`文件，通过这种方式打开工程，再重复出现问题前的操作，看是否能解决。
 
     <img src="pic.asset/image-20211117162500687.png" alt="image-20211117162500687" style="zoom:67%;" />
+# 关于VIVADO仿真时找不到子文件的问题及解决办法
+
+作者：计221陈铎友
+
+## 问题描述
+
+​	仿真时出现这种现象，是一个问题很模糊的报错
+
+![image-20231109190112563](C:\Users\Chandery\AppData\Roaming\Typora\typora-user-images\image-20231109190112563.png)
+
+我们按照提示找到下方Tcl Console中查看具体问题
+
+![image-20231109190254050](C:\Users\Chandery\AppData\Roaming\Typora\typora-user-images\image-20231109190254050.png)
+
+*问题描述*
+
+==ERROR:[Simtcl 6-50] Simulation engine failed to start: Failed to launch child process (child exe not found).==
+
+可以看到只有一条有问题描述的报错，Failed to launch child process (child exe not found)，让人摸不着头脑。上网搜了大量的资料，除了Xilinx官网有类似的搜索结果，只有一条中文提问。
+
+![image-20231109190539839](C:\Users\Chandery\AppData\Roaming\Typora\typora-user-images\image-20231109190539839.png)
+
+可以看到官方给的回答很模糊，都是关闭防火墙啊之类的，当然这个是需要注意的。只是笔者不是这个问题
+
+那么只好研究唯一的一篇中文资料
+
+![image-20231109190631892](C:\Users\Chandery\AppData\Roaming\Typora\typora-user-images\image-20231109190631892.png)
+
+![image-20231109190747311](C:\Users\Chandery\AppData\Roaming\Typora\typora-user-images\image-20231109190747311.png)
+
+可以看到这篇问题描述是和我们遇到的情况是一模一样的，所以看到下方的回答，只有重装系统是有效的~~（但是这是不懂电脑的人干的事）~~，所以我怀疑是环境变量的配置出现问题，而不是vivado本身的问题。因此回去翻看Tcl Console中列出的Info：
+
+![image-20231109191042762](C:\Users\Chandery\AppData\Roaming\Typora\typora-user-images\image-20231109191042762.png)
+
+发现中间虽然没有ERROR，但是有一条可疑的WARNING，可以看到这两个PATH正是环境变量中的元素，有理由怀疑是他们出现了冲突或者问题
+
+所以我选择**==在备份下他们的情况下==**在环境变量中把他们删除==（**注意备份！！！！**）==
+
+![image-20231109191404938](C:\Users\Chandery\AppData\Roaming\Typora\typora-user-images\image-20231109191404938.png)
+
+![image-20231109191442646](C:\Users\Chandery\AppData\Roaming\Typora\typora-user-images\image-20231109191442646.png)
+
+删除之后再运行，果然问题得到解决...
+
+回想这两个环境变量元素到底是什么，其实是我在配置Vscode的c环境时候留下的，因此大多数人都不会遇到这种问题，算是一个巧合。
+
+
+
+## 声明
+
+==**1.在参考本文时请务必看清楚问题描述，造成仿真失败的原因很多很多，务必确定自己遇到情况和本文相同！！！**==
+
+**==2.修改环境变量之前请务必记得备份，*可以使用把他们复制到新建文本文件的方法 orz*==**
+
