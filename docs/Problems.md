@@ -123,7 +123,14 @@ endmodule
 
 ## 问题汇总(又称vivado风水学宝典)
 
-> 请不要让vivado可能涉及的任何地方出现任何非**英文字母，数字，下划线**的字符，包括电脑名、用户名、路径等。
+1. 在排查问题之前
+   
+请不要让vivado可能涉及的任何地方出现任何非**英文字母，数字，下划线**的字符，包括电脑名、用户名、路径等位置！！！
+
+请不要让vivado可能涉及的任何地方出现任何非**英文字母，数字，下划线**的字符，包括电脑名、用户名、路径等位置！！！
+
+请不要让vivado可能涉及的任何地方出现任何非**英文字母，数字，下划线**的字符，包括电脑名、用户名、路径等位置！！！
+
 
 1. Vivado崩溃后C盘被占满，再次运行时无法运行
 
@@ -145,7 +152,7 @@ endmodule
 
     * 仿真时长不够：
 
-        <img src="pics.asset/image-20211112083644098.png" alt="image-20211112083644098" style="zoom:33%;" />
+        <img src="pic.asset/image-20211112083644098.png" alt="image-20211112083644098" style="zoom:33%;" />
 
         在此处设置运行时长，直到大于`tb`文件中指定的运行时长。
 
@@ -201,19 +208,19 @@ endmodule
     关闭vivado，从文件夹打开工程目录。点击`工程目录/你的工程名字.xpr`文件，通过这种方式打开工程，再重复出现问题前的操作，看是否能解决。
 
     <img src="pic.asset/image-20211117162500687.png" alt="image-20211117162500687" style="zoom:67%;" />
-# 关于VIVADO仿真时找不到子文件的问题及解决办法
 
-作者：计221陈铎友
+> Zakilim
+
+7. 关于VIVADO仿真时找不到子文件的问题及解决办法
 
 ## 问题描述
 
 ​	仿真时出现这种现象，是一个问题很模糊的报错
 
-![image-20231109190112563](C:\Users\Chandery\AppData\Roaming\Typora\typora-user-images\image-20231109190112563.png)
-
+![image1](./pic.asset/cdy_1_0.png)
 我们按照提示找到下方Tcl Console中查看具体问题
 
-![image-20231109190254050](C:\Users\Chandery\AppData\Roaming\Typora\typora-user-images\image-20231109190254050.png)
+![image1](./pic.asset/cdy_1_1.png)
 
 *问题描述*
 
@@ -221,27 +228,27 @@ endmodule
 
 可以看到只有一条有问题描述的报错，Failed to launch child process (child exe not found)，让人摸不着头脑。上网搜了大量的资料，除了Xilinx官网有类似的搜索结果，只有一条中文提问。
 
-![image-20231109190539839](C:\Users\Chandery\AppData\Roaming\Typora\typora-user-images\image-20231109190539839.png)
+![image1](./pic.asset/cdy_1_2.png)
 
 可以看到官方给的回答很模糊，都是关闭防火墙啊之类的，当然这个是需要注意的。只是笔者不是这个问题
 
 那么只好研究唯一的一篇中文资料
 
-![image-20231109190631892](C:\Users\Chandery\AppData\Roaming\Typora\typora-user-images\image-20231109190631892.png)
+![image1](./pic.asset/cdy_1_3.png)
 
-![image-20231109190747311](C:\Users\Chandery\AppData\Roaming\Typora\typora-user-images\image-20231109190747311.png)
+![image1](./pic.asset/cdy_1_4.png)
 
 可以看到这篇问题描述是和我们遇到的情况是一模一样的，所以看到下方的回答，只有重装系统是有效的~~（但是这是不懂电脑的人干的事）~~，所以我怀疑是环境变量的配置出现问题，而不是vivado本身的问题。因此回去翻看Tcl Console中列出的Info：
 
-![image-20231109191042762](C:\Users\Chandery\AppData\Roaming\Typora\typora-user-images\image-20231109191042762.png)
+![image1](./pic.asset/cdy_1_5.png)
 
 发现中间虽然没有ERROR，但是有一条可疑的WARNING，可以看到这两个PATH正是环境变量中的元素，有理由怀疑是他们出现了冲突或者问题
 
 所以我选择**==在备份下他们的情况下==**在环境变量中把他们删除==（**注意备份！！！！**）==
 
-![image-20231109191404938](C:\Users\Chandery\AppData\Roaming\Typora\typora-user-images\image-20231109191404938.png)
+![image1](./pic.asset/cdy_1_6.png)
 
-![image-20231109191442646](C:\Users\Chandery\AppData\Roaming\Typora\typora-user-images\image-20231109191442646.png)
+![image1](./pic.asset/cdy_1_7.png)
 
 删除之后再运行，果然问题得到解决...
 
@@ -255,3 +262,4 @@ endmodule
 
 **==2.修改环境变量之前请务必记得备份，*可以使用把他们复制到新建文本文件的方法 orz*==**
 
+> 计221陈铎友

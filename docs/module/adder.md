@@ -112,7 +112,7 @@ $$T_{rc} = (n-1)T_{carry}+T_{sum}$$
 
 事实上，选择进位加法器一般是将n位加法器进行分组，组内串行进位，组间选择进位。
 
-![](../pics.asset/csadder.jpg)
+![](../pic.asset/csadder.jpg)
 
 > 引用一张ppt里的图，所以还不赶紧看ppt复习吗
 
@@ -135,7 +135,7 @@ $$T_{csadder} = Mt_{carry} + (\frac NM-1) t_{Mux}$$
 
 最下面一行是分成8组的选择进位加法器，测得时延为$22ns = 7\times2 + 4\times 2$与预期一致
 
-![](../pics.asset/csadder_nogroup.gif)
+![](../pic.asset/csadder_nogroup.gif)
 
 选择进位加法器为什么能够带来效率的提升呢？
 

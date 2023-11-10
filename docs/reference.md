@@ -8,7 +8,7 @@
 
 [Verilog设计（原书第2版](document/Verilog设计（原书第2版）.pdf ':ignore')
 
-[数字设计原理与实践](document/数字设计原理与实践.pdf ':ignore')
+数字设计原理与实践
 
 Verilog数字系统设计教程 第3版 夏宇闻2013.pdf
 

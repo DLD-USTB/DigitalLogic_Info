@@ -49,4 +49,4 @@
 	+ 将文件夹压缩后，上传压缩包：`lab_uart_学号.zip`。
   
 ## 附录 A
-[KeyStone Architecture Literature Number: SPRUGP1 Universal Asynchronous Receiver/Transmitter (UART) User Guide](appendix/uart_doc.pdf)
+[KeyStone Architecture Literature Number: SPRUGP1 Universal Asynchronous Receiver/Transmitter (UART) User Guide](../appendix/uart_doc.pdf ':ignore ')
