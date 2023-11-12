@@ -1,4 +1,5 @@
 * [首页](/)
+* [在开始之前](/module/question1)
 * Verilog模块设计
 	* [Lab0:从0开始的FPGA生活](/module/begin)
 	* [Simulation使用帮助](/module/Simulation) 
