@@ -254,34 +254,6 @@ endmodule
 
 回想这两个环境变量元素到底是什么，其实是我在配置Vscode的c环境时候留下的，因此大多数人都不会遇到这种问题，算是一个巧合。
 
-# 关于如何在vivado仿真中添加观测信号
- *具体步骤*
-在仿真中打开左侧的SCOPE
-![image1](E:\DigitalLogic_Info\DigitalLogic_Info\docs\pic.asset\2023-11-16-14-18-41.png)
-
-打开testbench，内部有实例化后的模块名称，此处我实例化了verify3，名称为U
-![image1](E:\DigitalLogic_Info\DigitalLogic_Info\docs\pic.asset\2023-11-16-14-18-50.png)
-
-单击U
-
-![image1](E:\DigitalLogic_Info\DigitalLogic_Info\docs\pic.asset\2023-11-16-14-18-58.png)
-Objects中可以看到信号
-
-
-![image1](E:\DigitalLogic_Info\DigitalLogic_Info\docs\pic.asset\2023-11-16-14-19-05.png)
-右键信号
-
-
-![image1](E:\DigitalLogic_Info\DigitalLogic_Info\docs\pic.asset\2023-11-16-14-19-12.png)
-Add to wave window
-
-
-![image1](E:\DigitalLogic_Info\DigitalLogic_Info\docs\pic.asset\2023-11-16-14-19-29.png)
-保存仿真并重新仿真即可
-
-
-![image1](E:\DigitalLogic_Info\DigitalLogic_Info\docs\pic.asset\2023-11-16-14-19-37.png)
-
 
 
 
