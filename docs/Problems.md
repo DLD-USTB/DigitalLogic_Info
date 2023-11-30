@@ -270,6 +270,25 @@ endmodule
 
 ![image1](./pic.asset/behind4.png)
 > 物联221黄意凡  
+  
+9. 在vivado simulation中添加信号  
+  ## 具体步骤  
+  * 在仿真中打开左侧的SCOPE  
+   ![image1](./pic.asset/simulation1.png)
+  * 打开testbench，内部有实例化后的模块名称，此处我实例化了verify3，名称为U  
+   ![image1](./pic.asset/simulation2.png)
+  * 单击U  
+    ![image1](./pic.asset/simulation3.png)
+  * Objects中可以看到信号  
+    ![image1](./pic.asset/simulation4.png)
+  * 右键信号  
+   ![image1](./pic.asset/simulation5.png)
+  * Add to wave window  
+    ![image1](./pic.asset/simulation6.png)
+  * 保存仿真并重新仿真即可  
+    ![image1](./pic.asset/simulation7.png)
+
+
 
 ## 声明
 
