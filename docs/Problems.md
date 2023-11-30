@@ -255,7 +255,7 @@ endmodule
 回想这两个环境变量元素到底是什么，其实是我在配置Vscode的c环境时候留下的，因此大多数人都不会遇到这种问题，算是一个巧合。  
 > 计221陈铎友  
 
-> 8. 关于七段数码管引脚对应不清晰，在此画图显示来说明  
+8. 关于七段数码管引脚对应不清晰，在此画图显示来说明  
    
 ![image1](./pic.asset/pins7.png)  
 红框里面对应前4个数码管BIT1，BIT2,BIT3,BIT4，蓝框里面对应后4个数码管BIT5,BIT6,BIT7,BIT8；  
@@ -264,7 +264,8 @@ endmodule
 
 前四个7位数码管引脚  
 
-![image1](./pic.asset/front4.png)
+![image1](./pic.asset/front4.png)  
+
 后四个7位数码管引脚  
 
 ![image1](./pic.asset/behind4.png)
