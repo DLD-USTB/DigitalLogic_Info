@@ -273,5 +273,5 @@ endmodule
 ![image1](./pic.asset/front4.png)
 后四个7位数码管引脚  
 
-![image1](./pic.asset/behind4.png)。
+![image1](./pic.asset/behind4.png)
 > 物联221黄意凡
