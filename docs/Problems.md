@@ -252,6 +252,21 @@ ERROR:[Simtcl 6-50] Simulation engine failed to start: Failed to launch child pr
 
 回想这两个环境变量元素到底是什么，其实是我在配置Vscode的c环境时候留下的，因此大多数人都不会遇到这种问题，算是一个巧合。
 
+# 七段数码管引脚对应问题
+> 本问题提供者：物联221黄意凡  
+
+![image1](./pic.asset/pins7.png)  
+红框里面对应前4个数码管BIT1，BIT2,BIT3,BIT4，蓝框里面对应后4个数码管BIT5,BIT6,BIT7,BIT8；  
+
+前四个数码管和后四个数码管的细管对应的引脚不相同  
+
+前四个7位数码管引脚  
+
+![image1](./pic.asset/front4.png)  
+
+后四个7位数码管引脚  
+
+![image1](./pic.asset/behind4.png)
 
 **1.在参考本文时请务必看清楚问题描述，造成仿真失败的原因很多很多，务必确定自己遇到情况和本文相同！！！**
 
