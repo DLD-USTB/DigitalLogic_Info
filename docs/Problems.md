@@ -252,7 +252,7 @@ ERROR:[Simtcl 6-50] Simulation engine failed to start: Failed to launch child pr
 
 回想这两个环境变量元素到底是什么，其实是我在配置Vscode的c环境时候留下的，因此大多数人都不会遇到这种问题，算是一个巧合。
 
-# 七段数码管引脚对应问题
+## 七段数码管引脚对应问题
 > 本问题提供者：物联221黄意凡  
 
 ![image1](./pic.asset/pins7.png)  
