@@ -37,6 +37,7 @@ assign seg = (num == 4'd0) ? 8'b0011_1111:
                                           8'b0000_0000;
 ```
 这种写法较之`always`，解决了必须要声明为`reg`和可能产生`latch`两大痛点,我本人非常喜欢（
+当然，你需要*注意格式*。否则就会陷入`?:`的地狱
 
 > 更多写法欢迎参考附录中的《计算机组成原理设计指导书——Verilog部分》
 
@@ -46,11 +47,12 @@ assign seg = (num == 4'd0) ? 8'b0011_1111:
 
 ```verilog
 module add1(
-	input a,
-	input b,
-	input cin,
-	output sum,
-	output cout);
+	input  wire a,
+	input  wire b,
+	input  wire cin,
+	output wire sum,
+	output wire cout
+);
 	assign #4 sum = a ^ b ^ cin;
 	assign #2 cout =  (cin==1)|(cin==0)?(a & cin) | (b & cin)| (a & b):1'bx;
 endmodule
@@ -73,19 +75,19 @@ endmodule
 
 ```verilog
  module rcadd32(
-    input [31:0]a,
-    input [31:0]b,
-    input cin,
-    output [31:0]sum,
-    output cout
+    input  wire [31: 0] a,
+    input  wire [31: 0] b,
+    input  wire         cin,
+    output wire [31: 0] sum,
+    output wire         cout
 );
-    wire [32:0] c;
+    wire [32: 0] c;
     genvar i;
     assign c[0] = cin;
     assign cout = c[32];
     generate
         for (i=0;i < 32;i=i+1)
-        begin:add
+        begin : add
             add1 a(a[i],b[i],c[i],sum[i],c[i+1]); 
         end
     endgenerate   

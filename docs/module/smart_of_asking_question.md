@@ -1,7 +1,7 @@
 # 提问的智慧
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](https://github.com/ryanhanwu/How-To-Ask-Questions-The-Smart-Way/pulls)
 
-***本文为原仓库为 ryanhanwu 的How-To-Ask-Questions-The-Snart-Way***
+***本文为原仓库为 ryanhanwu 的How-To-Ask-Questions-The-Smart-Way***
 
 **How To Ask Questions The Smart Way**
 
