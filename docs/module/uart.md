@@ -83,13 +83,13 @@
 
   
 ## 附录 A
-[UART Receiver.v](../codes/uart/UART_Receiver.v ':ignore ')
-[UART Transmitter.v](../codes/uart/UART_Transmitter.v ':ignore ')
+[UART Receiver.v](codes/uart/UART_Receiver.v ':ignore ')
+[UART Transmitter.v](codes/uart/UART_Transmitter.v ':ignore ')
 
 ![格式](../pic.asset/uart_form.png)
 ![分频表](../pic.asset/uart_clk_divisor.png)
 
-[KeyStone Architecture Literature Number: SPRUGP1 Universal Asynchronous Receiver/Transmitter (UART) User Guide](../appendix/uart_doc.pdf ':ignore ')
+[KeyStone Architecture Literature Number: SPRUGP1 Universal Asynchronous Receiver/Transmitter (UART) User Guide](appendix/uart_doc.pdf ':ignore ')
 
 UART模块框图
 ![顶层模块框图](../pic.asset/uart.svg)
