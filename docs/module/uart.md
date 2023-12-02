@@ -13,10 +13,8 @@
     module uartAdapter(
         input  wire         clk    ,
         input  wire         resetn ,
-                
         input  wire         rx     ,
         output wire         tx     ,
-    
         input  wire [ 7: 0] wdata  ,
         input  wire         wvalid ,
         output wire [ 7: 0] rdata  ,
@@ -29,9 +27,7 @@
     module uartTransmitter(
         input  wire         clk    ,
         input  wire         rst    ,
-                
         output reg          tx     ,
-    
         input  wire [ 7: 0] wdata  ,
         input  wire         wvalid 
     );
@@ -39,9 +35,7 @@
     module uartReceiver(
         input  wire         clk    ,
         input  wire         rst    ,
-                
         input  wire         rx     ,
-    
         output wire [ 7: 0] rdata  ,
         output reg          rvalid
     );
@@ -60,12 +54,15 @@
       1. 大家在使用我们提供的参考代码中的模块时，可能会发现缺少了一些相关代码，这可能是我们~~有意为之~~*不小心删除的*，请大家根据对UART的理解自行填补。
       2. 大家在填补完成代码后，可能会发现，虽然填补的代码理论上应当是完全正确的，但该收发模块并不能正常工作。这~~亦是我们有意为之~~*可能是我们不小心写错的*，请大家根据对UART的理解，从代码中找到粗心的我们留下的错误，并将其改正。
       3. 这些要求与提供的资料是基本对应的，因此可以大大简化难度。
+      4. 我们在提供的`UART_Receiver.v`中部分实现性能~~不小心~~变差了，如果**有能力以及相关意愿**可以**尝试**更改。（我们推荐对龙芯杯有兴趣的同学尝试，经过修改，整体的**W**orst **N**egative **S**lack（WNS）会大幅降低。经测试，在150MHz时钟下至少可以做到WNS为1.960）
+     
 
 2. 通过已给出的外设控制模块使用正确的UART收发模块，完成上板通信测试。
 
-    + 当然，从零开始实现一个外设控制模块的难度对于大家可能会略有些高。为了让大家在能够深入理解UART协议的同时，不用花太多的时间在写各种琐碎而基础的代码或是与UART无关错误的debug上，我们决定**将本次实验所用到的外设控制模块的参考代码直接提供给大家**，大家如果不愿意从零写起，直接使用我们给出的代码即可。
+    + 当然，从零开始实现一个外设控制模块的难度对于大家可能会略有些高。为了让大家在能够深入理解UART协议的同时，不用花太多的时间在写各种琐碎而基础的代码或是与UART无关错误的debug上，我们决定**将本次实验所用到的外设控制模块直接提供给大家**，大家如果不愿意从零写起，直接使用我们给出的模块即可。
     + 备注：
-    	+ 对于外设模块，我们**并不会**不小心删除代码或是粗心写错代码。
+        + 我们提供的是一个IP核，解压后在Vivado中安装添加`.v`文件的形式直接添加IP核文件夹中的`.xci`文件即可。关于IP的端口可以在Vivado中双击IP核查看（**在Vivado中，IP核旁边有警告是正常的，因为为了简化IP核导入难度，提供的IP核无需配置相关库路径**）。
+        + 如果想详细了解控制外设的协议，可以参考附录A中相关内容，也可以选择自行实现相关协议。
 
 ## 实验要求
 1. 实验内容 1、2 的运行结果需要找助教或老师演示验收；
@@ -83,13 +80,51 @@
 
   
 ## 附录 A
+
+### 代码及IP
 [UART Receiver.v](codes/uart/UART_Receiver.v ':ignore ')
+
 [UART Transmitter.v](codes/uart/UART_Transmitter.v ':ignore ')
 
+[外设IP模块](codes/uart/frameSeg_0_1.7z ':ignore ')
+
+### 相关软件
+[XCOM.exe](codes/uart/XCOM_V2.6.exe ':ignore ')
+
+[XCOM配置文件（流水学号）](codes/uart/UART_TEST.ini ':ignore ') 
+
+### UART规范
 ![格式](../pic.asset/uart_form.png)
+
 ![分频表](../pic.asset/uart_clk_divisor.png)
 
 [KeyStone Architecture Literature Number: SPRUGP1 Universal Asynchronous Receiver/Transmitter (UART) User Guide](appendix/uart_doc.pdf ':ignore ')
 
-UART模块框图
+### UART模块框图
 ![顶层模块框图](../pic.asset/uart.svg)
+
+### 控制协议
+```
+0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7  ...             0 1 2 3 4 5 6 7
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+- // -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|     Start     |     Data  (Up to 64 bits)      |      End      |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+- // -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+```
+- 其中，Start与End字段均为`0x7E`
+- 在Data字段中，如果在某一个字中出现`0x7E`，则用`0x7D 0x5E`替换
+- 在Data字段中，如果在某一个字中出现`0x7D`，则用`0x7D 0x5D`替换
+
+接收端将会按照以上规则进行处理，因此在发送时，请注意发送的信息*有时需要进行转义*。
+
+### IP核数码管对应关系
+```
+  +--seg[0]--+            
+  |          |            
+seg[1]   seg[3]         
+  |          |            
+  +--seg[2]--+            
+  |          |            
+seg[4]   seg[6]         
+  |          |            
+  +--seg[5]--+ . seg[7]  
+```
