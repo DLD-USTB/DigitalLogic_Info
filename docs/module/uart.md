@@ -77,28 +77,34 @@
     + 该电子秤能通过UART协议接收使用电脑的串口传输软件（例如我们提供的XCOM）传输而来的数据，并将其存储。
     + 该电子秤具有帧解析功能，能够解析通过UART协议接收的数据，并将其存储。
     + 该电子秤具有计算本次价格与累计价格的功能，并将其显示在数码管上。例如：本次为第3次输入累加，单价为3，质量为2，历史总价为20，则数码管可以显示：“AC03 0026”（总输入次数与总价）。按下某个按键后，数码管的显示内容切换为：“0302 0006”（本次的单价、质量与价格）。
+    +
     ?>  当然，以上只是一个简单的示范。根据我们提供的帧格式，你可以使用最大4个字节来存储单价和质量，而以上的示例只能支持显示一些小得可怜的计算。而且，又有哪个电子秤是以元为最小单位的呢？我们希望你们能实现定点小数的输入与计算功能，例如单价是12.34，质量是11.11，那么输出的本次价格为137.10（四舍五入至2位小数）。具体如何实现，答案在你们的创造力中。
+
     + 该电子秤具有清零功能，按下清零键后，一切恢复如初。数码管应有对应信息输出，例如“CLR”。
     + 该电子秤能在每次输入次数或总价发生改变时（包括清零）通过UART向电脑端发送数据，数据包括输入次数、单价、质量、本次价格、总价。电脑端解析该数据，并将其输出在电脑屏幕上。
+    +
     ?> 然而如果只是单纯地输出数据的话，未免有些过于朴素了。以要求3中的第一个例子来说，如果只是输出“AC03 0026 0302 0006”的话，可以说是毫无可读性。我们希望你们能通过整齐的格式给出完整的信息。一位助教Kevin给出的输出例子是：
+
     ```
-    **********Vanity Fair's Balance**********
-    price: 12.34$
-    amount: 56
-    ---accumulate mode begin---
-    price: 12.34$
-    amount: 56
-    price: 12.34$
-    amount: 56
-    ---accumulate mode end---
-    total: xx.xx$
-    **********Vanity Fair's Balance**********
+        **********Vanity Fair's Balance**********
+        price: 12.34$
+        amount: 56
+        ---accumulate mode begin---
+        price: 12.34$
+        amount: 56
+        price: 12.34$
+        amount: 56
+        ---accumulate mode end---
+        total: xx.xx$
+        **********Vanity Fair's Balance**********
     ```
-    
+    + 
     ?> 很遗憾我的文学素养并不高，无法为大家解释“Vanity Fair's Balance”是什么（补充：Vanity Fair译为名利场，源于班扬的《天路历程》，Balance事实上是天平。——Kevin）。但无论怎样，像以上这样具有较高可读性的输出格式比“AC03 0026 0302 0006”要好太多不是吗？具体的输出格式实现，大家可以自由发挥。
 
-    + 为你的电子秤增加更多功能
-    ?> 实验4.1所实现的只是一些最基础的要求（虽然这并不意味着难度也很低）。在本实验中，我们希望你们能为你们的电子秤添加更多功能，例如可变长数据帧、去皮、大数显示优化（例如2000012.34可以简略显示为2M，你可以选择的字头有k,M,G,T,P等）、多个可切换的历史总价、撤销功能等。具体添加什么功能，我们不作约束。
++ 为你的电子秤增加更多功能
+
+
+?> 实验4.1所实现的只是一些最基础的要求（虽然这并不意味着难度也很低）。在本实验中，我们希望你们能为你们的电子秤添加更多功能，例如可变长数据帧、去皮、大数显示优化（例如2000012.34可以简略显示为2M，你可以选择的字头有k,M,G,T,P等）、多个可切换的历史总价、撤销功能等。具体添加什么功能，我们不作约束。
 
 
 
@@ -136,40 +142,41 @@
 ![顶层模块框图](../pic.asset/uart.svg)
 
 ### 控制协议及相关说明
- frame: (an example)
- ```
- 3   2                   1                   0
- 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
- +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
- |     0x7E      |                  PRICE                      |
- +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
- |     PRICE     |     0x7F      |           AMOUNT            |
- +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
- |             MOUNT             |    0x7E     |
- +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+frame: (an example)
+```
+3   2                   1                   0
+1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|     0x7E      |                  PRICE                      |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|     PRICE     |     0x7F      |           AMOUNT            |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|             MOUNT             |    0x7E     |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 ```
 ```
- frame: (a simpler version, THE VERSION THAT THIS MODULE IMPLEMENTED)
- 3   2                   1                   0
- 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
- +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
- |     0x7E      |                  PRICE                      |
- +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
- |     PRICE     |                 AMOUNT                      |
- +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
- |     MOUNT     |    0x7E     |
- +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
- ```
- Actually, a 0x7E stands for the start or the end of one frame, first 0x7F accured in the frame means the following part is the price section, until it comes to an other 0x7F, which indecates the strat of the amount section.
- 
- In this file, THE CHARACTER 0x7F BETWEEN PRICE AND AMOUNT IS REMOVED. IT CAN BE ADDED TO THE CODE, PROVIDED, AN EXCELLENT MARK IS WHAT ATTRACTS YOU.
+frame: (a simpler version, THE VERSION THAT THIS MODULE IMPLEMENTED)
+3   2                   1                   0
+1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|     0x7E      |                  PRICE                      |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|     PRICE     |                 AMOUNT                      |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|     MOUNT     |    0x7E     |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+```
 
- !> THERE CAN BE AT MOST 4 BYTES IN ONE SECTION: PRICE, AMOUNT, ETC.
- 
- for EVERY 0x7E in the DATA SECTION and ALIGNED with the one byte,  that is, in 31:24, 23:16, 15:8 and 7:0. IT MUST BE REPLACED BY 0x7D 0x5E 
- for EVERY 0x7D in the DATA SECTION IT MUST BE REPLACED BY 0x7D 0x5D
- 
- NOT IMPLEMENTED:
- for EVERY 0x7F in the DATA SECTION IT MUST BE REPLACED BY 0x7D 0x5F
+Actually, a 0x7E stands for the start or the end of one frame, first 0x7F accured in the frame means the following part is the price section, until it comes to an other 0x7F, which indecates the strat of the amount section.
+
+In this file, THE CHARACTER 0x7F BETWEEN PRICE AND AMOUNT IS REMOVED. IT CAN BE ADDED TO THE CODE, PROVIDED, AN EXCELLENT MARK IS WHAT ATTRACTS YOU.
+
+!> THERE CAN BE AT MOST 4 BYTES IN ONE SECTION: PRICE, AMOUNT, ETC.
+
+for EVERY 0x7E in the DATA SECTION and ALIGNED with the one byte,  that is, in 31:24, 23:16, 15:8 and 7:0. IT MUST BE REPLACED BY 0x7D 0x5E 
+for EVERY 0x7D in the DATA SECTION IT MUST BE REPLACED BY 0x7D 0x5D
+
+NOT IMPLEMENTED:
+for EVERY 0x7F in the DATA SECTION IT MUST BE REPLACED BY 0x7D 0x5F
 
 接收端将会按照以上规则进行处理，因此在发送时，请注意发送的信息*有时需要进行转义*。

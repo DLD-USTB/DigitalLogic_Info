@@ -1,9 +1,9 @@
 <!-- _coverpage.md -->
 
 
-# DLD <small>1.0.2</small>
+# DLD <small>1.0.3</small>
 
-DLD,not DDL
+DLD, not DDL
 
 Digital logic document
 
@@ -18,3 +18,5 @@ Welcome to the digital world!
 
 [开始数字之旅](#写在前面)
 [参考资料下载](/reference)
+
+<!-- ![](_media/bg.jpg) -->
