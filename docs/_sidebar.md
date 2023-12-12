@@ -10,6 +10,6 @@
 * [验收要求](grading)
     * [lab1:流水灯](/module/led)
     * [lab3:组合逻辑](/module/combine_logic)
-    * [lab4:时序逻辑]()
+    * [lab4:时序逻辑](/module/sequence_logic)
     * [lab5:电子秤与UART](/module/uart)
 * [参考书目及板卡信息](reference)
