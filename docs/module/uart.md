@@ -87,15 +87,15 @@
 
     ```
         **********Vanity Fair's Balance**********
-        price: 12.34$
-        amount: 56
+        price: 1.00$
+        amount: 2
         ---accumulate mode begin---
-        price: 12.34$
-        amount: 56
-        price: 12.34$
-        amount: 56
+        price: 2.00$
+        amount: 3
+        price: 3.00$
+        amount: 1
         ---accumulate mode end---
-        total: xx.xx$
+        total: 11.00$
         **********Vanity Fair's Balance**********
     ```
     + 
@@ -142,20 +142,21 @@
 ![顶层模块框图](../pic.asset/uart.svg)
 
 ### 控制协议及相关说明
-frame: (an example)
+帧定义
 ```
 3   2                   1                   0
 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-|     0x7E      |                  PRICE                      |
+|     0x7E      |                  PRICE  ...                  
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-|     PRICE     |     0x7F      |           AMOUNT            |
+|     0x7F      |                 AMOUNT  ...                  
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-|             MOUNT             |    0x7E     |
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|     0x7E      |
++-+-+-+-+-+-+-+-+
 ```
+
+帧 (一个更简单的实现, **这个模块在提供的文件中已经实现**)
 ```
-frame: (a simpler version, THE VERSION THAT THIS MODULE IMPLEMENTED)
 3   2                   1                   0
 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
@@ -163,20 +164,33 @@ frame: (a simpler version, THE VERSION THAT THIS MODULE IMPLEMENTED)
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 |     PRICE     |                 AMOUNT                      |
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-|     MOUNT     |    0x7E     |
+|    AMOUNT     |    0x7E     |
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 ```
 
-Actually, a 0x7E stands for the start or the end of one frame, first 0x7F accured in the frame means the following part is the price section, until it comes to an other 0x7F, which indecates the strat of the amount section.
+`0x7E`是帧开始和结束的标志。当第一个`0x7E`出现，代表一个帧开始，而当第二个`0x7E`出现，代表一个帧结束。
+在出现一个`0x7E`后，接下来的字节代表PRICE字段，而当出现了一个`0x7F`，代表PRICE字段结束，AMOUNT字段开始。
 
-In this file, THE CHARACTER 0x7F BETWEEN PRICE AND AMOUNT IS REMOVED. IT CAN BE ADDED TO THE CODE, PROVIDED, AN EXCELLENT MARK IS WHAT ATTRACTS YOU.
+在本协议中，如果PRICE或AMOUNT字段中出现了`0x7E`，`0x7F`则需要进行转义。对于每一个`0x7E`而言，需要写为`0x7D 0x5E`；对于每一个`0x7F`而言，需要写为`0x7D 0x5F`。
+而若想要在PRICE或AMOUNT字段中输出`0x7D`，则需要转为`0x7D 0x5D`。
 
-!> THERE CAN BE AT MOST 4 BYTES IN ONE SECTION: PRICE, AMOUNT, ETC.
-
-for EVERY 0x7E in the DATA SECTION and ALIGNED with the one byte,  that is, in 31:24, 23:16, 15:8 and 7:0. IT MUST BE REPLACED BY 0x7D 0x5E 
-for EVERY 0x7D in the DATA SECTION IT MUST BE REPLACED BY 0x7D 0x5D
-
-NOT IMPLEMENTED:
-for EVERY 0x7F in the DATA SECTION IT MUST BE REPLACED BY 0x7D 0x5F
+在本模块中，`0x7D 0x5F`的转义部分没有完成，你可以选择不使用扩展的帧协议，即使用简化版本；也可以选择自行实现帧协议，或者自行在本模块中添加`0x7D 0x5F`的转义。
 
 接收端将会按照以上规则进行处理，因此在发送时，请注意发送的信息*有时需要进行转义*。
+
+### PLL IP核的使用
+请依照以下步骤进行IP核心的例化：
+
+![](../pic.asset/ip_gen_pll_1.png)
+
+![](../pic.asset/ip_gen_pll_2.png)
+
+![](../pic.asset/ip_gen_pll_3.png)
+
+![](../pic.asset/ip_gen_pll_4.png)
+
+![](../pic.asset/ip_gen_pll_5.png)
+
+![](../pic.asset/ip_gen_pll_6.png)
+
+在例化完成后，可以将IP核视为一个普通模块进行使用。其名称即为例化时的`Component Name`，在本例子中，即为`clk_wiz_0`；其输入输出端口可见例化时的`IP Symbol`部分，左侧为输入，右侧为输出。
