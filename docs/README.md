@@ -1,4 +1,4 @@
-!> 本仓库已不再维护，新仓库地址：*[USTB-806](https://github.com/USTB-806/DigitalLogic_Info/)*
+!> 本仓库已不再维护，新仓库地址：*[USTB-806/DigitalLogic-Info](https://github.com/USTB-806/DigitalLogic_Info/)*
 
 > 这里是北京科技大学数字逻辑课程的相关网站，本网站由2020级数字逻辑的助教创建并维护
 
